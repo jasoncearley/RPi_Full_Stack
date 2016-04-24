@@ -15,17 +15,17 @@ def log_values(sensor_id, temp, hum):
 	conn.commit()
 	conn.close()
 
-Sensor = 11
-humiture = 17
+#Sensor = 11
+#humiture = 17
 
-humidity, temperature = DHT.read_retry(Sensor, humiture)
+#humidity, temperature = DHT.read_retry(Sensor, humiture)
 
 # If you don't have a sensor but still wish to run this program, comment out all the
 # sensor related lines, and uncomment the following lines (these will produce random
 # numbers for the temperature and humidity variables):
-# import random
-# humidity = random.randint(1,100)
-# temperature = random.randint(10,30)
+import random
+humidity = random.randint(1,100)
+temperature = random.randint(10,30)
 
 temperature = temperature * 9/5.0 + 32
 
