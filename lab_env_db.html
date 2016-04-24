@@ -79,6 +79,18 @@
               </tbody>
             </table>
         </div>
+      <!-- Google Charts Code start -->
+      <div class="two-thirds column" style="margin-top: 5%">
+        <div class="row">
+          <div class="row">
+            <div class="three columns">
+              <div id="chart_temps"></div>
+              <div id="chart_humid"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Google Charts Code end -->
     </div>
   </body>
   <script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
@@ -88,4 +100,69 @@
       jQuery("#range_select").submit();
     });
   </script>
+
+  <!-- Google Charts JS start -->
+  <script type="text/javascript" src="https://www.google.com/jsapi?autoload={'modules':[{'name':'visualization','version':'1','packages':['corechart']}]}"></script>
+
+  <script>
+    google.load('visualization', '1', {packages: ['corechart']});
+    google.setOnLoadCallback(drawChart);
+    function drawChart() {
+      var data = new google.visualization.DataTable();
+      data.addColumn('datetime', 'Time');
+      data.addColumn('number', 'Temperature');
+      data.addRows([
+          {% for row in temp %}
+            [new Date({{row[0][0:4]}},{{row[0][5:7]}},{{row[0][8:10]}},{{row[0][11:13]}},{{row[0][14:16]}}),
+                {{'%0.2f'|format(row[2])}}],
+          {% endfor %}
+        ]);
+      var options = {
+        width: 600,
+        height: 563,
+        hAxis: {
+          title: "Date",
+          gridlines: { count: {{temp_items}}, color: '#CCC' },
+          format: 'dd-MMM-yyyy HH:mm' },
+        vAxis: {
+          title: 'Degrees'
+        },
+        title: 'Temperature',
+        curveType: 'function'  //Makes line curved
+      };
+      var chart = new google.visualization.LineChart(document.getElementById('chart_temps'));
+      chart.draw(data, options);
+    }
+  </script>
+
+  <script>
+    google.load('visualization', '1', {packages: ['corechart']});
+    google.setOnLoadCallback(drawChart);
+    function drawChart() {
+      var data = new google.visualization.DataTable();
+      data.addColumn('datetime', 'Time');
+      data.addColumn('number', 'Humidity');
+      data.addRows([
+          {% for row in hum %}
+            [new Date({{row[0][0:4]}},{{row[0][5:7]}},{{row[0][8:10]}},{{row[0][11:13]}},{{row[0][14:16]}}),{{'%0.2f'|format(row[2])}}],
+          {% endfor %}
+        ]);
+      var options = {
+        width: 600,
+        height: 563,
+        hAxis: {
+          title: "Date",
+          gridlines: { count: {{hum_items}}, color: '#CCC' },
+          format: 'dd-MMM-yyyy HH:mm'        },
+        vAxis: {
+          title: 'Percent'
+        },
+        title: 'Humidity',
+        curveType: 'function'  //Makes line curved
+      };
+      var chart = new google.visualization.LineChart(document.getElementById('chart_humid'));
+      chart.draw(data, options);
+    }
+  </script>
+  <!-- Google Charts JS end -->
 </html>
