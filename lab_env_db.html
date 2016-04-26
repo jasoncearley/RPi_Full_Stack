@@ -43,6 +43,12 @@
     <!-- Datetimepicker form end -->
       <div class="row">
       <div class="eleven columns">
+        <div class="one column">
+          <div class="one column">
+            <a href="" id="plotly" style="position:relative;top:15px">Plotly</a>
+          </div>
+          <a href="/" style="position:relative;top:15px">Current</a>
+       </div>
         <form id="range_select" action = "/lab_env_db" method="GET">
           <input type="hidden" class="timezone" name="timezone" /> <!-- Timezone info goes here -->
           <div class="one column">
@@ -59,6 +65,9 @@
           </div>
         </form>
       </div>
+    </div>
+    <div class="row">
+     <a href="" id="plotly_url" target="_blank"></a><span id="plotly_wait"></span>
     </div>
       <div class="row">
         <div class="one-third column" style="margin-top: 5%">
@@ -145,6 +154,19 @@
         jQuery(".timezone").val(timezone.name());   // Datetimepicker code
         jQuery("#range_select").submit();
       });
+    jQuery("#plotly").click(function(){
+      jQuery("#plotly_wait").text("Sending data...");
+      jQuery("#plotly_url").text("");
+      {% autoescape false %}
+      jQuery.get("/to_plotly?{{query_string}}")
+      {% endautoescape %}
+        .done(function( data ) {
+          jQuery("#plotly_url").attr("href",data);
+          jQuery("#plotly_url").text("Click to see your plot");
+          jQuery("#plotly_wait").text("");
+	    });
+	        return false; //This is so that the click on the link does not cause the page to refresh
+	  });
   </script>
   <!-- Datetimepicker files end -->
 
