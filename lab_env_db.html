@@ -23,9 +23,28 @@
   </head>
   <body>
     <div class="container">
+      <!-- Datetimepicker form start -->
+      <div class="row">
+        <form id="datetime_range" action="/lab_env_db" method="GET">
+            <div class="three columns">
+              <label for="from">From date</label>
+              <input class="u-full-width" id="datetimepicker1" type="text" value="{{from_date}}" name="from">
+            </div>
+            <div class="three columns">
+              <label for="to">To date</label>
+              <input class="u-full-width" id="datetimepicker2" type="text" value="{{to_date}}" name="to">
+            </div>
+            <div class="two columns">
+              <input type="hidden" class="timezone" name="timezone" />    <!-- Timezone info goes here -->
+              <input class="button-primary" type="submit" value="Submit" style="position:relative; top: 28px" id="submit_button" />
+            </div>
+        </form>
+      </div>
+    <!-- Datetimepicker form end -->
       <div class="row">
       <div class="eleven columns">
         <form id="range_select" action = "/lab_env_db" method="GET">
+          <input type="hidden" class="timezone" name="timezone" /> <!-- Timezone info goes here -->
           <div class="one column">
             <input type="radio" name="range_h" value="3" id="radio_3" /><label for="radio_3">3hrs</label>
           </div>
@@ -95,6 +114,40 @@
   </body>
   <script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
   <script src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+
+  <!-- Datetimepicker files start -->
+  <link rel="stylesheet" type="text/css" href="/static/css/jquery.datetimepicker.css"/ >
+  <script src="/static/javascript/jquery.datetimepicker.full.js"></script>
+
+  <!-- jstimezonedetect script start -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jstimezonedetect/1.0.4/jstz.min.js" ></script>
+  <script>
+  //This code is for the datetime range form
+  jQuery( "#datetime_range" ).submit(function( event ) {
+      timezone = jstz.determine();
+      jQuery(".timezone").val(timezone.name());
+  });
+  </script>
+  <!-- jstimezonedetect script end -->
+
+  <script>
+    jQuery('#datetimepicker1').datetimepicker(
+      {
+        format:'Y-m-d H:i',
+        defaultDate:'{{from_date}}'
+      });
+    jQuery('#datetimepicker2').datetimepicker({
+        format:'Y-m-d H:i',
+        defaultDate:'{{to_date}}'
+      });
+    jQuery("#range_select input[type=radio]").click(function(){
+        timezone = jstz.determine();                // Datetimepicker code
+        jQuery(".timezone").val(timezone.name());   // Datetimepicker code
+        jQuery("#range_select").submit();
+      });
+  </script>
+  <!-- Datetimepicker files end -->
+
   <script>
     jQuery("#range_select input[type=radio]").click(function(){
       jQuery("#range_select").submit();
@@ -110,7 +163,7 @@
     function drawChart() {
       var data = new google.visualization.DataTable();
       data.addColumn('datetime', 'Time');
-      data.addColumn('number', 'Temperature');
+      data.addColumn('number', 'Temp');
       data.addRows([
           {% for row in temp %}
             [new Date({{row[0][0:4]}},{{row[0][5:7]}},{{row[0][8:10]}},{{row[0][11:13]}},{{row[0][14:16]}}),
