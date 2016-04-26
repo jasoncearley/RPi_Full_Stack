@@ -39,8 +39,12 @@ def lab_temp():
 @app.route("/lab_env_db", methods=['GET'])
 def lab_env_db():
 	temperatures, humidities, from_date_str, to_date_str = get_records()
-	return render_template("lab_env_db.html", temp = temperatures,
-	hum = humidities, temp_items = len(temperatures), hum_items = len(humidities))
+	return render_template(	"lab_env_db.html", 	temp = temperatures,
+												hum = humidities,
+												from_date = from_date_str,
+												to_date = to_date_str,
+												temp_items = len(temperatures),
+												hum_items = len(humidities))
 
 def get_records():
 	#Get the from date value from the URL
@@ -72,9 +76,9 @@ def get_records():
 	if isinstance(range_h_int,int):
 		time_now		= datetime.datetime.now()
 		time_from 		= time_now - datetime.timedelta(hours = range_h_int)
-		#time_to   		= time_now
+		time_to   		= time_now
 		from_date_str   = time_from.strftime("%Y-%m-%d %H:%M")
-		to_date_str	    = time_now.strftime("%Y-%m-%d %H:%M")
+		to_date_str	    = time_to.strftime("%Y-%m-%d %H:%M")
 
 	import sqlite3
 	conn=sqlite3.connect('/var/www/lab_app/lab_app.db')
@@ -88,7 +92,7 @@ def get_records():
 
 def validate_date(d):
     try:
-        datetime.datetime.strptime(d, '%Y-%m-%d %H:%M:%S')
+        datetime.datetime.strptime(d, '%Y-%m-%d %H:%M')
         return True
     except ValueError:
         return False
